@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="PMO.API/PMO.API.csproj" />
+  <Project Path="PMO.Application/PMO.Application.csproj" />
+  <Project Path="PMO.Domain/PMO.Domain.csproj" />
+  <Project Path="PMO.Infrastructure/PMO.Infrastructure.csproj" />
+</Solution>

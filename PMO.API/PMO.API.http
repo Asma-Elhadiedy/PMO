@@ -1,0 +1,6 @@
+@PMO.API_HostAddress = http://localhost:5037
+
+GET {{PMO.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
