@@ -1,5 +1,7 @@
 ﻿
 
+using PMO.Infrastructure.Persistence;
+
 namespace PMO.Infrastructure.UoW;
 
 public class UnitOfWork(AppDbContext _context) : IUnitOfWork

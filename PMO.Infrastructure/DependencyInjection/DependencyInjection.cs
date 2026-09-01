@@ -1,5 +1,7 @@
 ﻿
 
+using PMO.Infrastructure.Persistence;
+
 namespace PMO.Infrastructure.DependencyInjection;
 
 public static class DependencyInjection

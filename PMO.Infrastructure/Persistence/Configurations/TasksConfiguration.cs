@@ -1,5 +1,5 @@
 ﻿
-namespace PMO.Infrastructure.Persistence;
+namespace PMO.Infrastructure.Persistence.Configurations;
 
 internal class TasksConfiguration : IEntityTypeConfiguration<ProjectTask>
 {

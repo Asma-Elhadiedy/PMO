@@ -13,4 +13,9 @@ public class ProjectTask : BaseEntity
     public Guid ProjectId { get; set; }
     [ForeignKey(nameof(ProjectId))]
     public virtual Project? Project { get; set; }
+
+    /// <summary>
+    /// Navigation Collection
+    /// </summary>
+    public virtual ICollection<Comment>? Comments { get; set; } = [];
 }
