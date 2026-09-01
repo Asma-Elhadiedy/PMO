@@ -5,9 +5,12 @@ public static class DependencyInjection
 {
     extension(IServiceCollection services)
     {
-        public IServiceCollection AddAppServices(string connectionString)
+        public IServiceCollection AddPresentationServices(string connectionString)
         {
-            services.AddInfrastructureServices(connectionString);
+            services
+                .AddApplicationServices()
+                .AddInfrastructureServices(connectionString);
+
             return services;
         }
     }

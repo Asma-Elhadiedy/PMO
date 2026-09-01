@@ -15,4 +15,8 @@
     <ProjectReference Include="..\PMO.Application\PMO.Application.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="DBScripts\" />
+  </ItemGroup>
+
 </Project>

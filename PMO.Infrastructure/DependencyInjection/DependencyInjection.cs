@@ -8,9 +8,11 @@ public static class DependencyInjection
     {
         public IServiceCollection AddInfrastructureServices(string connectionString)
         {
+
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             services.AddDbContext<AppDbContext>(o => o.UseSqlServer(connectionString));
+            
             return services;
         }
     }

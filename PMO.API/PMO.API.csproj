@@ -8,9 +8,11 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.11" />
+    <PackageReference Include="Serilog.AspNetCore" Version="10.0.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\PMO.Domain\PMO.Domain.csproj" />
     <ProjectReference Include="..\PMO.Infrastructure\PMO.Infrastructure.csproj" />
   </ItemGroup>
 

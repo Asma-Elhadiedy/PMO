@@ -11,7 +11,7 @@ public class UnitOfWork(AppDbContext _context) : IUnitOfWork
         typeof(T),
         _ => new GenericRepository<T>(_context));
 
-    public async Task<int> CompleteAsync()
+    public async Task<int> CompleteAsync(CancellationToken ct = default)
     {
         var updatedEntry = _context.ChangeTracker.Entries()
             .Where(e => e.State == EntityState.Modified && e.Entity is BaseEntity)
@@ -23,7 +23,7 @@ public class UnitOfWork(AppDbContext _context) : IUnitOfWork
             ((BaseEntity)entry.Entity).UpdatedAt = date;
         }
 
-        return await _context.SaveChangesAsync();
+        return await _context.SaveChangesAsync(ct);
     }
     
     public async Task<bool> ExecuteTransactionAsync<T>(Func<Task<bool>> action, CancellationToken ct = default)
