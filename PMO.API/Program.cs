@@ -18,10 +18,13 @@ builder.Host.UseSerilog((context, configuration) =>
 
 var app = builder.Build();
 
+await app.InitializeDatabaseAsync();
+
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
+
 
 app.UseHttpsRedirection();
 

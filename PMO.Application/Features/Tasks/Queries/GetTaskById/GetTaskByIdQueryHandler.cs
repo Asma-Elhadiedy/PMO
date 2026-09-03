@@ -6,7 +6,13 @@ internal sealed class GetTaskByIdQueryHandler(IUnitOfWork _unitOfWork) : IReques
     public async Task<TaskResponse> Handle(GetTaskByIdQuery request, CancellationToken cancellationToken)
     {
         var task = await _unitOfWork.Repository<ProjectTask>().GetByIdAsync(request.Id, cancellationToken);
-        return new TaskResponse(task.Id, task.Name, task.Description, task.Status);
+        return new TaskResponse(
+            task.Id, 
+            task.Name, 
+            task.Description, 
+            task.StartDate,
+            task.EndDate,
+            task.Status);
     }
 
 }

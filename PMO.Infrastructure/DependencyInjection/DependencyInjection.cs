@@ -1,7 +1,5 @@
 ﻿
 
-using PMO.Infrastructure.Persistence;
-
 namespace PMO.Infrastructure.DependencyInjection;
 
 public static class DependencyInjection
@@ -11,6 +9,7 @@ public static class DependencyInjection
         public IServiceCollection AddInfrastructureServices(string connectionString)
         {
 
+            services.AddScoped<ISeedData, SeedData>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             services.AddDbContext<AppDbContext>(o => o.UseSqlServer(connectionString));

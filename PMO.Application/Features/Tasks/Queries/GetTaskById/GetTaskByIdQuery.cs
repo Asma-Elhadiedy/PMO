@@ -1,5 +1,5 @@
 ﻿
 namespace PMO.Application.Features.Tasks.Queries.GetTaskById;
 
-internal sealed record GetTaskByIdQuery(Guid Id) : IRequest<TaskResponse>;
+public sealed record GetTaskByIdQuery(Guid Id) : IRequest<TaskResponse>;
 

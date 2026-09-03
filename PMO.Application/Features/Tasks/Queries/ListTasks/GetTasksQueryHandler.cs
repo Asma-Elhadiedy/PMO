@@ -1,11 +1,21 @@
 ﻿
 namespace PMO.Application.Features.Tasks.Queries.ListTasks;
 
-internal sealed class GetTasksQueryHandler : IRequestHandler<GetTasksQuery, IReadOnlyList<TaskResponse>>
+internal sealed class GetTasksQueryHandler(IUnitOfWork _unitOfWork) : IRequestHandler<GetTasksQuery, IReadOnlyList<TaskResponse>>
 {
-    public Task<IReadOnlyList<TaskResponse>> Handle(GetTasksQuery request, CancellationToken cancellationToken)
+    public async Task<IReadOnlyList<TaskResponse>> Handle(GetTasksQuery request, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var tasks = await _unitOfWork.Repository<ProjectTask>()
+               .GetAllSelectedAsync(t => new TaskResponse(
+                   Id: t.Id,
+                   Name: t.Name,
+                   Description: t.Description,
+                   StartDate: t.StartDate,
+                   EndDate: t.EndDate,
+                   Status: t.Status
+        ), null, cancellationToken);
+
+        return tasks;
     }
-     
+
 }

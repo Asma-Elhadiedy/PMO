@@ -1,5 +1,4 @@
-﻿
-namespace PMO.API.DependencyInjection;
+﻿namespace PMO.API.DependencyInjection;
 
 public static class DependencyInjection
 {

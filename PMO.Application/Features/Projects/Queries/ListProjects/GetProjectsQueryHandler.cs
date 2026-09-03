@@ -1,18 +1,18 @@
 ﻿
 namespace PMO.Application.Features.Projects.Queries.ListProjects;
 
-internal sealed class GetProjectsQueryHandler(IUnitOfWork _unitOfWork) : IRequestHandler<GetProjectsQuery, IReadOnlyList<ProjectsResponse>>
+internal sealed class GetProjectsQueryHandler(IUnitOfWork _unitOfWork) : IRequestHandler<GetProjectsQuery, IReadOnlyList<ProjectResponse>>
 {
-    public async Task<IReadOnlyList<ProjectsResponse>> Handle(GetProjectsQuery request, CancellationToken cancellationToken)
+    public async Task<IReadOnlyList<ProjectResponse>> Handle(GetProjectsQuery request, CancellationToken cancellationToken)
     {
         var projects = await _unitOfWork.Repository<Project>()
-            .GetAllSelectedAsync(p => new ProjectsResponse(
+            .GetAllSelectedAsync(p => new ProjectResponse(
                 Id: p.Id,
                 Name: p.Name,
                 Description: p.Description,
-            StartDate: p.StartDate,
-            EndDate: p.EndDate,
-            Status: p.Status
+                StartDate: p.StartDate,
+                EndDate: p.EndDate,
+                Status: p.Status
         ), null, cancellationToken);
 
         return projects;
