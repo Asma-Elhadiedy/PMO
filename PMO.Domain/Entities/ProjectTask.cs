@@ -5,7 +5,7 @@ public class ProjectTask : BaseEntity
 {
     public string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
-    public ETaskStatus Status { get; set; }
+    public ETaskStatus Status { get; set; } = ETaskStatus.Active;
     public DateTime StartDate { get; set; }
     public DateTime? EndDate { get; set; }
 

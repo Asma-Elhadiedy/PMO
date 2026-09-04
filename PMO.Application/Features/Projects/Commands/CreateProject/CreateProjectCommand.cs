@@ -1,4 +1,5 @@
 ﻿
 namespace PMO.Application.Features.Projects.Commands.CreateProject;
 
-internal sealed record CreateProjectCommand(CreateProjectRequest Request) : IRequest<bool>;
+public sealed record CreateProjectCommand(CreateProjectRequest Request) : IRequest<Guid>;
+    

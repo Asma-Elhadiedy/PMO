@@ -6,4 +6,4 @@ public sealed record TaskResponse(
     string Description,
     DateTime StartDate,
     DateTime? EndDate,   
-    ETaskStatus Status);
+    string Status);

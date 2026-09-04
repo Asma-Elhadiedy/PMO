@@ -12,7 +12,7 @@ internal sealed class GetProjectsQueryHandler(IUnitOfWork _unitOfWork) : IReques
                 Description: p.Description,
                 StartDate: p.StartDate,
                 EndDate: p.EndDate,
-                Status: p.Status
+                Status: p.Status.ToString()
         ), null, cancellationToken);
 
         return projects;

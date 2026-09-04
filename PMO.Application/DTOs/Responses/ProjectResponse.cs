@@ -7,4 +7,4 @@ internal sealed record ProjectResponse(
     string Description,
     DateTime StartDate,
     DateTime? EndDate,
-    EProjectStatus Status);
+    string Status);

@@ -1,5 +1,6 @@
-using PMO.Application.Features.Tasks.Queries.ListTasks;
+using PMO.Application.Features.Tasks.Commands.CreateTask;
 using PMO.Application.Features.Tasks.Queries.GetTaskById;
+using PMO.Application.Features.Tasks.Queries.ListTasks;
 
 namespace PMO.API.Controllers;
 
@@ -17,7 +18,7 @@ public class TasksController(ILogger<TasksController> _logger, IMediator _mediat
     }
 
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetById(Guid id, CancellationToken ct)
+    public async Task<IActionResult> GetById([FromRoute]Guid id, CancellationToken ct)
     {
         var task = await _mediator.Send(new GetTaskByIdQuery(id), ct);
 
@@ -28,5 +29,14 @@ public class TasksController(ILogger<TasksController> _logger, IMediator _mediat
 
         _logger.LogInformation("Task fetched successfully");
         return Ok(task);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Create([FromBody] CreateTaskRequest request, CancellationToken ct)
+    {
+        var taskId = await _mediator.Send(new CreateTaskCommand(request), ct);
+
+        _logger.LogInformation("Task created successfully");
+        return CreatedAtAction(nameof(GetById), new { id = taskId }, new { taskId });
     }
 }

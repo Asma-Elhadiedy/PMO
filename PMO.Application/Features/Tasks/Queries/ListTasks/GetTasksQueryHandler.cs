@@ -12,7 +12,7 @@ internal sealed class GetTasksQueryHandler(IUnitOfWork _unitOfWork) : IRequestHa
                    Description: t.Description,
                    StartDate: t.StartDate,
                    EndDate: t.EndDate,
-                   Status: t.Status
+                   Status: t.Status.ToString()
         ), null, cancellationToken);
 
         return tasks;

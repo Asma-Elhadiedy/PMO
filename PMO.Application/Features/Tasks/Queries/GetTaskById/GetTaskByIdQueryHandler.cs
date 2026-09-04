@@ -12,7 +12,7 @@ internal sealed class GetTaskByIdQueryHandler(IUnitOfWork _unitOfWork) : IReques
             task.Description, 
             task.StartDate,
             task.EndDate,
-            task.Status);
+            task.Status.ToString());
     }
 
 }

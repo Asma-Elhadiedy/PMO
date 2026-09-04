@@ -1,6 +1,41 @@
-@PMO.API_HostAddress = http://localhost:5037
+@PMO.API_HostAddress = https://localhost:7013
 
-GET {{PMO.API_HostAddress}}/weatherforecast/
-Accept: application/json
+GET {{PMO.API_HostAddress}}/api/projects
 
+###
+
+
+GET {{PMO.API_HostAddress}}/api/projects/210EB485-54B5-4636-9066-D2EBC0C8C8FF
+###
+
+
+POST {{PMO.API_HostAddress}}/api/projects
+Content-Type: application/json
+{
+    "Name": "project",
+    "Description": "project",
+    "StartDate": "2025-12-12T12:00:00",
+    "EndDate": "2025-12-12T00:00:00"
+}
+###
+
+
+GET {{PMO.API_HostAddress}}/api/tasks
+
+###
+
+
+GET {{PMO.API_HostAddress}}/api/tasks/63b2c548-4a03-4a72-bc2f-aaecf50b4b8b
+###
+
+
+POST {{PMO.API_HostAddress}}/api/tasks
+Content-Type: application/json
+{
+    "Name": "tasks1",
+    "Description": "tasks",
+    "ProjectId": "210EB485-54B5-4636-9066-D2EBC0C8C8FF",
+    "StartDate": "2025-12-12T12:00:00",
+    "EndDate": "2025-12-12T00:00:00"
+}
 ###

@@ -1,6 +1,6 @@
 ﻿namespace PMO.Application.DTOs.Requests;
 
-internal record CreateProjectRequest(
+public record CreateProjectRequest(
     string Name,
     string Description,
     DateTime StartDate,

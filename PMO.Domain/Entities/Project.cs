@@ -5,7 +5,7 @@ public class Project : BaseEntity
 {
     public string Name { get; set; } = default!;
     public string Description { get; set; } = default!;
-    public EProjectStatus Status { get; set; }
+    public EProjectStatus Status { get; set; } = EProjectStatus.Active;
     public DateTime StartDate { get; set; }
     public DateTime? EndDate  { get; set; }
 

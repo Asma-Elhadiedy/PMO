@@ -1,6 +1,4 @@
 ﻿
-using PMO.Infrastructure.Persistence;
-
 namespace PMO.Infrastructure.Repository;
 
 public class GenericRepository<T>(AppDbContext _context) : IGenericRepository<T> where T : BaseEntity

@@ -12,6 +12,6 @@ internal sealed class GetProjectByIdQueryHandler(IUnitOfWork _unitOfWork) : IReq
             project.Description,
             project.StartDate,
             project.EndDate, 
-            project.Status);
+            project.Status.ToString());
     }
 }
