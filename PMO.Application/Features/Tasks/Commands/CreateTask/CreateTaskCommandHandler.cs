@@ -6,7 +6,7 @@ internal sealed class CreateTaskCommandHandler(IUnitOfWork _unitOfWork) : IReque
     public async Task<Guid> Handle(CreateTaskCommand request, CancellationToken cancellationToken)
     {
         var model = request.Request;
-        var task= new ProjectTask
+        var task = new ProjectTask
         {
             Name = model.Name,
             Description = model.Description,

@@ -10,8 +10,9 @@ public static class DependencyInjection
         {
             var assembly = typeof(IApplicationMarker).Assembly;
 
-            services.AddValidatorsFromAssembly(assembly);
+            services.AddValidatorsFromAssembly(assembly, includeInternalTypes: true);
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(assembly));
+            services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationPipelineBehaviour<,>));
             return services;
         }
     }

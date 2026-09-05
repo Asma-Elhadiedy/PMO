@@ -15,6 +15,7 @@ internal sealed class UpdateTaskCommandHandler(IUnitOfWork _unitOfWork) : IReque
         task.Status = (ETaskStatus)model.Status;
         task.StartDate = model.StartDate;
         task.EndDate = model.EndDate;
+        task.ProjectId = model.ProjectId;
 
         return await _unitOfWork.CompleteAsync(cancellationToken) > 0;
     }
