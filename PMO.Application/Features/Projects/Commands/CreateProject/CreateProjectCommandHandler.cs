@@ -5,12 +5,13 @@ internal sealed class CreateProjectCommandHandler(IUnitOfWork _unitOfWork) : IRe
 {
     public async Task<Guid> Handle(CreateProjectCommand request, CancellationToken cancellationToken)
     {
+        var model = request.Request;
         var project = new Project
         {
-            Name = request.Request.Name,
-            Description = request.Request.Description,
-            StartDate = request.Request.StartDate,
-            EndDate = request.Request.EndDate
+            Name = model.Name,
+            Description = model.Description,
+            StartDate = model.StartDate,
+            EndDate = model.EndDate
         };
 
         _unitOfWork.Repository<Project>().Add(project);

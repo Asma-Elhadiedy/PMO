@@ -1,4 +1,6 @@
 using PMO.Application.Features.Tasks.Commands.CreateTask;
+using PMO.Application.Features.Tasks.Commands.DeleteTask;
+using PMO.Application.Features.Tasks.Commands.UpdateTask;
 using PMO.Application.Features.Tasks.Queries.GetTaskById;
 using PMO.Application.Features.Tasks.Queries.ListTasks;
 
@@ -18,7 +20,7 @@ public class TasksController(ILogger<TasksController> _logger, IMediator _mediat
     }
 
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetById([FromRoute]Guid id, CancellationToken ct)
+    public async Task<IActionResult> GetById([FromRoute] Guid id, CancellationToken ct)
     {
         var task = await _mediator.Send(new GetTaskByIdQuery(id), ct);
 
@@ -38,5 +40,29 @@ public class TasksController(ILogger<TasksController> _logger, IMediator _mediat
 
         _logger.LogInformation("Task created successfully");
         return CreatedAtAction(nameof(GetById), new { id = taskId }, new { taskId });
+    }
+
+    [HttpPut]
+    public async Task<IActionResult> Update([FromBody] UpdateTaskRequest request, CancellationToken ct)
+    {
+        var isUpdated = await _mediator.Send(new UpdateTaskCommand(request), ct);
+
+        if (!isUpdated)
+            return NotFound();
+
+        _logger.LogInformation("Task updated successfully");
+        return Ok();
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete([FromRoute] Guid id, CancellationToken ct)
+    {
+        var isDeleted = await _mediator.Send(new DeleteTaskCommand(id), ct);
+
+        if (!isDeleted)
+            return BadRequest();
+
+        _logger.LogInformation("Task deleted successfully");
+        return NoContent();
     }
 }

@@ -5,13 +5,14 @@ internal sealed class CreateTaskCommandHandler(IUnitOfWork _unitOfWork) : IReque
 {
     public async Task<Guid> Handle(CreateTaskCommand request, CancellationToken cancellationToken)
     {
+        var model = request.Request;
         var task= new ProjectTask
         {
-            Name = request.Request.Name,
-            Description = request.Request.Description,
-            ProjectId = request.Request.ProjectId,
-            StartDate = request.Request.StartDate,
-            EndDate = request.Request.EndDate
+            Name = model.Name,
+            Description = model.Description,
+            ProjectId = model.ProjectId,
+            StartDate = model.StartDate,
+            EndDate = model.EndDate
         };
 
         _unitOfWork.Repository<ProjectTask>().Add(task);
