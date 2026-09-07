@@ -20,4 +20,9 @@ public class GenericRepository<T>(AppDbContext _context) : IGenericRepository<T>
     public bool Add(T entity)
         => _context.Set<T>().Add(entity) != null;
 
+    public bool Remove(T entity, CancellationToken ct = default)
+    {
+        _context.Set<T>().Remove(entity);
+        return true;
+    }
 }

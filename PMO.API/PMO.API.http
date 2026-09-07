@@ -12,9 +12,9 @@ GET {{PMO.API_HostAddress}}/api/projects/210EB485-54B5-4636-9066-D2EBC0C8C8FF
 POST {{PMO.API_HostAddress}}/api/projects
 Content-Type: application/json
 {
-    "Name": "",
+    "Name": "project",
     "Description": "project",
-    "StartDate": "2025-12-12T12:00:00",
+    "StartDate": "2025-12-12T00:00:00",
     "EndDate": "2025-12-12T00:00:00"
 }
 ###

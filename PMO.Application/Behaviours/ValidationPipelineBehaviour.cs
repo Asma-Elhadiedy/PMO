@@ -1,11 +1,10 @@
 ﻿
-
 namespace PMO.Application.Behaviours;
 
-public class ValidationPipelineBehaviour<IRequest, TResult>(IEnumerable<IValidator<IRequest>> _validator) : IPipelineBehavior<IRequest, TResult>
+public class ValidationPipelineBehaviour<TRequest, TResult>(IEnumerable<IValidator<TRequest>> _validator) : IPipelineBehavior<TRequest, TResult>
 {
 
-    public async Task<TResult> Handle(IRequest request, RequestHandlerDelegate<TResult> next, CancellationToken cancellationToken)
+    public async Task<TResult> Handle(TRequest request, RequestHandlerDelegate<TResult> next, CancellationToken cancellationToken)
     {
         if (!_validator.Any())
             return await next(cancellationToken);
