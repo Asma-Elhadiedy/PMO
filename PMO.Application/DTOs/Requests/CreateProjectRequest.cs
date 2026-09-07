@@ -1,10 +1,10 @@
-﻿namespace PMO.Application.DTOs.Requests;
+﻿using System.ComponentModel;
+
+namespace PMO.Application.DTOs.Requests;
 
 public record CreateProjectRequest(
-    string Name,
-    string Description,
+    [property: DefaultValue("Project Name")] string Name,
+    [property: DefaultValue("Project Description")] string Description,
     DateTime StartDate,
     DateTime EndDate);
-
-
 

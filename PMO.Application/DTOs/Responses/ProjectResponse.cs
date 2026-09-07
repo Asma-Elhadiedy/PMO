@@ -1,7 +1,7 @@
 ﻿
 namespace PMO.Application.DTOs.Responses;
 
-internal sealed record ProjectResponse(
+public sealed record ProjectResponse(
     Guid Id,
     string Name,
     string Description,

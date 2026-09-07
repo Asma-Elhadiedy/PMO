@@ -1,7 +1,7 @@
 
 var builder = WebApplication.CreateBuilder(args);
 
-var connectionString = builder.Configuration.GetConnectionString("defaultConnection") ?? 
+var connectionString = builder.Configuration.GetConnectionString("defaultConnection") ??
     throw new Exception("Couldn't find connection string.");
 
 builder.Services.AddPresentationServices(connectionString);
@@ -23,8 +23,9 @@ await app.InitializeDatabaseAsync();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
-
 
 app.UseHttpsRedirection();
 

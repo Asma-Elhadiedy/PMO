@@ -10,6 +10,7 @@ public static class DependencyInjection
                 .AddApplicationServices()
                 .AddInfrastructureServices(connectionString);
 
+            services.AddSwaggerGen();
             return services;
         }
     }

@@ -8,6 +8,8 @@ namespace PMO.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Produces("application/json")]
+[ProducesResponseType(StatusCodes.Status400BadRequest)]
 public class TasksController(ILogger<TasksController> _logger, IMediator _mediator) : ControllerBase
 {
     [HttpGet]
