@@ -9,60 +9,90 @@ namespace PMO.API.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Produces("application/json")]
-[ProducesResponseType(StatusCodes.Status400BadRequest)]
 public class TasksController(ILogger<TasksController> _logger, IMediator _mediator) : ControllerBase
 {
     [HttpGet]
+    [ProducesResponseType<Result<IReadOnlyList<TaskResponse>>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<Result<IReadOnlyList<TaskResponse>>>(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Get(CancellationToken ct)
     {
-        var tasks = await _mediator.Send(new GetTasksQuery(), ct);
+        var tasksResult = await _mediator.Send(new GetTasksQuery(), ct);
+
+        if (!tasksResult.IsSuccess)
+        {
+            _logger.LogWarning(tasksResult.Error);
+            return NotFound(tasksResult);
+        }
 
         _logger.LogInformation("Tasks fetched successfully");
-        return Ok(tasks);
+        return Ok(tasksResult);
     }
 
     [HttpGet("{id}")]
+    [ProducesResponseType<Result<TaskResponse>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<Result<TaskResponse>>(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetById([FromRoute] Guid id, CancellationToken ct)
     {
-        var task = await _mediator.Send(new GetTaskByIdQuery(id), ct);
+        var taskResult = await _mediator.Send(new GetTaskByIdQuery(id), ct);
 
-        if (task is null)
+        if (!taskResult.IsSuccess)
         {
-            return NotFound();
+            _logger.LogWarning(taskResult.Error);
+            return NotFound(taskResult);
         }
 
         _logger.LogInformation("Task fetched successfully");
-        return Ok(task);
+        return Ok(taskResult);
     }
 
     [HttpPost]
+    [ProducesResponseType<Result<Guid>>(StatusCodes.Status201Created)]
+    [ProducesResponseType<Result<Guid>>(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Create([FromBody] CreateTaskRequest request, CancellationToken ct)
     {
-        var taskId = await _mediator.Send(new CreateTaskCommand(request), ct);
+        var creationResult = await _mediator.Send(new CreateTaskCommand(request), ct);
+
+        if (!creationResult.IsSuccess)
+        {
+            _logger.LogWarning(creationResult.Error);
+            return BadRequest(creationResult);
+        }
 
         _logger.LogInformation("Task created successfully");
-        return CreatedAtAction(nameof(GetById), new { id = taskId }, new { taskId });
+        return CreatedAtAction(nameof(GetById), new { id = creationResult.Data }, new { taskId = creationResult.Data });
     }
 
-    [HttpPut]
+
+    [HttpPut("{id}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType<Result<bool>>(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Update([FromBody] UpdateTaskRequest request, CancellationToken ct)
     {
-        var isUpdated = await _mediator.Send(new UpdateTaskCommand(request), ct);
+        var updateResult = await _mediator.Send(new UpdateTaskCommand(request), ct);
 
-        if (!isUpdated)
-            return NotFound();
+        if (!updateResult.IsSuccess)
+        {
+            _logger.LogWarning(updateResult.Error);
+            return BadRequest(updateResult);
+        }
 
         _logger.LogInformation("Task updated successfully");
-        return Ok();
+        return NoContent();
     }
 
     [HttpDelete("{id}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType<Result<bool>>(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Delete([FromRoute] Guid id, CancellationToken ct)
     {
-        var isDeleted = await _mediator.Send(new DeleteTaskCommand(id), ct);
+        var deleteResult = await _mediator.Send(new DeleteTaskCommand(id), ct);
 
-        if (!isDeleted)
-            return BadRequest();
+        if (!deleteResult.IsSuccess)
+        {
+            _logger.LogWarning(deleteResult.Error);
+            return BadRequest(deleteResult);
+        }
+
 
         _logger.LogInformation("Task deleted successfully");
         return NoContent();

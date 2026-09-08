@@ -2,6 +2,7 @@
 global using Serilog;
 global using MediatR;
 global using PMO.Domain.Interfaces;
+global using PMO.Application.Common;
 global using Microsoft.AspNetCore.Mvc;
 global using PMO.API.DependencyInjection;
 global using PMO.Application.DTOs.Requests;

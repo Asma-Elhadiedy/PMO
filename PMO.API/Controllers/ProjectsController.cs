@@ -8,42 +8,55 @@ namespace PMO.API.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Produces("application/json")]
-[ProducesResponseType(StatusCodes.Status400BadRequest)]
 public class ProjectsController(ILogger<ProjectsController> _logger, IMediator _mediator) : ControllerBase
 {
     [HttpGet]
-    [ProducesResponseType<IReadOnlyList<ProjectResponse>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<Result<IReadOnlyList<ProjectResponse>>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<Result<IReadOnlyList<ProjectResponse>>>(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Get(CancellationToken ct)
     {
-        var projects = await _mediator.Send(new GetProjectsQuery(), ct);
+        var projectsResult = await _mediator.Send(new GetProjectsQuery(), ct);
+        if (!projectsResult.IsSuccess)
+        {
+            _logger.LogWarning(projectsResult.Error);
+            return NotFound(projectsResult);
+        }
 
         _logger.LogInformation("Projects fetched successfully");
-        return Ok(projects);
+        return Ok(projectsResult);
     }
 
     [HttpGet("{id}")]
-    [ProducesResponseType<ProjectResponse>(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType<Result<ProjectResponse>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<Result<ProjectResponse>>(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetById([FromRoute]Guid id, CancellationToken ct)
     {
-        var project = await _mediator.Send(new GetProjectByIdQuery(id), ct);
+        var projectResult = await _mediator.Send(new GetProjectByIdQuery(id), ct);
 
-        if (project is null)
+        if (!projectResult.IsSuccess)
         {
-            return NotFound();
+            _logger.LogWarning(projectResult.Error);
+            return NotFound(projectResult);
         }
 
         _logger.LogInformation("Project fetched successfully");
-        return Ok(project);
+        return Ok(projectResult);
     }
 
     [HttpPost]
-    [ProducesResponseType<ProjectResponse>(StatusCodes.Status201Created)]
+    [ProducesResponseType<Result<Guid>>(StatusCodes.Status201Created)]
+    [ProducesResponseType<Result<Guid>>(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Create([FromBody]CreateProjectRequest request, CancellationToken ct)
     {
-        var projectId = await _mediator.Send(new CreateProjectCommand(request), ct);
+        var projectResult = await _mediator.Send(new CreateProjectCommand(request), ct);
+
+        if (!projectResult.IsSuccess)
+        {
+            _logger.LogWarning(projectResult.Error);
+            return BadRequest(projectResult);
+        }
 
         _logger.LogInformation("Project created successfully");
-        return CreatedAtAction(nameof(GetById), new { id = projectId }, new { projectId});
+        return CreatedAtAction(nameof(GetById), new { id = projectResult.Data }, new { projectId = projectResult.Data });
     }
 }

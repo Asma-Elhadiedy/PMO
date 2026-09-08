@@ -1,9 +1,9 @@
 ﻿
 namespace PMO.Application.Features.Projects.Commands.CreateProject;
 
-internal sealed class CreateProjectCommandHandler(IUnitOfWork _unitOfWork) : IRequestHandler<CreateProjectCommand, Guid>
+internal sealed class CreateProjectCommandHandler(IUnitOfWork _unitOfWork) : IRequestHandler<CreateProjectCommand, Result<Guid>>
 {
-    public async Task<Guid> Handle(CreateProjectCommand request, CancellationToken cancellationToken)
+    public async Task<Result<Guid>> Handle(CreateProjectCommand request, CancellationToken cancellationToken)
     {
         var model = request.Request;
         var project = new Project
@@ -17,6 +17,6 @@ internal sealed class CreateProjectCommandHandler(IUnitOfWork _unitOfWork) : IRe
         _unitOfWork.Repository<Project>().Add(project);
         await _unitOfWork.CompleteAsync(cancellationToken);
 
-        return project.Id;
+        return Result<Guid>.Success(project.Id);
     }
 }

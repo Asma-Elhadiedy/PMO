@@ -1,9 +1,9 @@
 ﻿
 namespace PMO.Application.Features.Tasks.Commands.CreateTask;
 
-internal sealed class CreateTaskCommandHandler(IUnitOfWork _unitOfWork) : IRequestHandler<CreateTaskCommand, Guid>
+internal sealed class CreateTaskCommandHandler(IUnitOfWork _unitOfWork) : IRequestHandler<CreateTaskCommand, Result<Guid>>
 {
-    public async Task<Guid> Handle(CreateTaskCommand request, CancellationToken cancellationToken)
+    public async Task<Result<Guid>> Handle(CreateTaskCommand request, CancellationToken cancellationToken)
     {
         var model = request.Request;
         var task = new ProjectTask
@@ -18,6 +18,6 @@ internal sealed class CreateTaskCommandHandler(IUnitOfWork _unitOfWork) : IReque
         _unitOfWork.Repository<ProjectTask>().Add(task);
         await _unitOfWork.CompleteAsync(cancellationToken);
 
-        return task.Id;
+        return Result<Guid>.Success(task.Id);
     }
 }

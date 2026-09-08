@@ -1,9 +1,9 @@
 ﻿
 namespace PMO.Application.Features.Tasks.Queries.ListTasks;
 
-internal sealed class GetTasksQueryHandler(IUnitOfWork _unitOfWork) : IRequestHandler<GetTasksQuery, IReadOnlyList<TaskResponse>>
+internal sealed class GetTasksQueryHandler(IUnitOfWork _unitOfWork) : IRequestHandler<GetTasksQuery, Result<IReadOnlyList<TaskResponse>>>
 {
-    public async Task<IReadOnlyList<TaskResponse>> Handle(GetTasksQuery request, CancellationToken cancellationToken)
+    public async Task<Result<IReadOnlyList<TaskResponse>>> Handle(GetTasksQuery request, CancellationToken cancellationToken)
     {
         var tasks = await _unitOfWork.Repository<ProjectTask>()
                .GetAllSelectedAsync(t => new TaskResponse(
@@ -15,7 +15,7 @@ internal sealed class GetTasksQueryHandler(IUnitOfWork _unitOfWork) : IRequestHa
                    Status: t.Status.ToString()
         ), null, cancellationToken);
 
-        return tasks;
+        return Result<IReadOnlyList<TaskResponse>>.Success(tasks);
     }
 
 }
