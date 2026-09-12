@@ -2,9 +2,10 @@
 
 using System.Diagnostics;
 
-namespace PMO.Application.Behaviours;
+namespace PMO.Application.Behaviors;
 
-public class LoggingPipelineBehaviour<TRequest, TResult>(ILogger<LoggingPipelineBehaviour<TRequest, TResult>> _logger) : IPipelineBehavior<TRequest, TResult>
+public class LoggingPipelineBehavior<TRequest, TResult>(ILogger<LoggingPipelineBehavior<TRequest, TResult>> _logger) 
+    : IPipelineBehavior<TRequest, TResult> where TRequest : notnull
 {
     public async Task<TResult> Handle(TRequest request, RequestHandlerDelegate<TResult> next, CancellationToken cancellationToken)
     {

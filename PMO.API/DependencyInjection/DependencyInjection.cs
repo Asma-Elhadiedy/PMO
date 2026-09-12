@@ -1,4 +1,5 @@
-﻿namespace PMO.API.DependencyInjection;
+﻿
+namespace PMO.API.DependencyInjection;
 
 public static class DependencyInjection
 {
@@ -11,6 +12,9 @@ public static class DependencyInjection
                 .AddInfrastructureServices(connectionString);
 
             services.AddSwaggerGen();
+            services.AddExceptionHandler<GlobalExceptionHandler>();
+            services.AddProblemDetails();
+
             return services;
         }
     }

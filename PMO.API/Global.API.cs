@@ -1,6 +1,7 @@
 ﻿
 global using Serilog;
 global using MediatR;
+global using PMO.API.Middleware;
 global using PMO.Domain.Interfaces;
 global using PMO.Application.Common;
 global using Microsoft.AspNetCore.Mvc;

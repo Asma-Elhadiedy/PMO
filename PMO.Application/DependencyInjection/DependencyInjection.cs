@@ -11,9 +11,13 @@ public static class DependencyInjection
             var assembly = typeof(IApplicationMarker).Assembly;
 
             services.AddValidatorsFromAssembly(assembly, includeInternalTypes: true);
-            services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(assembly));
-            services.AddScoped(typeof(IPipelineBehavior<,>), typeof(LoggingPipelineBehaviour<,>));
-            services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationPipelineBehaviour<,>));
+            services.AddMediatR(cfg =>
+            {
+                cfg.RegisterServicesFromAssembly(assembly);
+                cfg.AddOpenBehavior(typeof(LoggingPipelineBehavior<,>));
+                cfg.AddOpenBehavior(typeof(ValidationPipelineBehavior<,>));
+            });
+
             return services;
         }
     }

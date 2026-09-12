@@ -18,6 +18,8 @@ builder.Host.UseSerilog((context, configuration) =>
 
 var app = builder.Build();
 
+app.UseExceptionHandler();
+
 await app.InitializeDatabaseAsync();
 
 if (app.Environment.IsDevelopment())
