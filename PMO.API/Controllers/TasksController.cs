@@ -85,7 +85,7 @@ public class TasksController(ILogger<TasksController> _logger, IMediator _mediat
     [ProducesResponseType<Result<bool>>(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Delete([FromRoute] Guid id, CancellationToken ct)
     {
-        var deleteResult = await _mediator.Send(new DeleteTaskCommand(id), ct);
+        var deleteResult = await _mediator.Send(new DeleteProjectCommand(id), ct);
 
         if (!deleteResult.IsSuccess)
         {

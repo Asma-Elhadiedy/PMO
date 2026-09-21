@@ -3,7 +3,7 @@ namespace PMO.Application.Features.Projects.Queries.ListProjects;
 
 internal sealed class GetProjectsQueryHandler(IUnitOfWork _unitOfWork) : IRequestHandler<GetProjectsQuery, Result<IReadOnlyList<ProjectResponse>>>
 {
-    public async Task<Result<IReadOnlyList<ProjectResponse> >> Handle(GetProjectsQuery request, CancellationToken cancellationToken)
+    public async Task<Result<IReadOnlyList<ProjectResponse>>> Handle(GetProjectsQuery request, CancellationToken cancellationToken)
     {
         var projects = await _unitOfWork.Repository<Project>()
             .GetAllSelectedAsync(p => new ProjectResponse(

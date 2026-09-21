@@ -3,7 +3,8 @@ namespace PMO.Domain.Enums;
 
 public enum ETaskStatus
 {
-    Active = 1,
+    Todo,
+    InProgress,
     Completed,
-    OnHold
+    Cancelled
 }

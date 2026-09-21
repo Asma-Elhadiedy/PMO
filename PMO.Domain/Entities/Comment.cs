@@ -11,4 +11,7 @@ public class Comment : BaseEntity
     public Guid TaskId { get; set; }
     [ForeignKey(nameof(TaskId))]
     public virtual ProjectTask? Task { get; set; }
+
+    [ForeignKey(nameof(CreatedById))]
+    public string CreatedById { get; set; } = default!;
 }
