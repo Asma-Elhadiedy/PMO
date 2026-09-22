@@ -15,8 +15,8 @@ internal sealed class CreateProjectCommandHandler(IUnitOfWork _unitOfWork) : IRe
         };
 
         _unitOfWork.Repository<Project>().Add(project);
-        await _unitOfWork.CompleteAsync(cancellationToken);
-
-        return Result<Guid>.Success(project.Id);
+        if (await _unitOfWork.CompleteAsync(cancellationToken) > 0)
+            return Result<Guid>.Success(project.Id);
+        return Result<Guid>.Failure("Failed to create the project.");
     }
 }

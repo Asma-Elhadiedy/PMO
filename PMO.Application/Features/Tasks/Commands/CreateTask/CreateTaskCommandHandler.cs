@@ -16,8 +16,8 @@ internal sealed class CreateTaskCommandHandler(IUnitOfWork _unitOfWork) : IReque
         };
 
         _unitOfWork.Repository<ProjectTask>().Add(task);
-        await _unitOfWork.CompleteAsync(cancellationToken);
-
-        return Result<Guid>.Success(task.Id);
+        if (await _unitOfWork.CompleteAsync(cancellationToken) > 0)
+            return Result<Guid>.Success(task.Id);
+        return Result<Guid>.Failure("Failed to create the task.");
     }
 }

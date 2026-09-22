@@ -1,4 +1,4 @@
 ﻿
 namespace PMO.Application.Features.Tasks.Commands.DeleteTask;
 
-public sealed record DeleteProjectCommand(Guid Id) : IRequest<Result<bool>>;
+public sealed record DeleteTaskCommand(Guid Id) : IRequest<Result<bool>>;

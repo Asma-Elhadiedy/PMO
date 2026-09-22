@@ -9,6 +9,8 @@ internal sealed class UpdateTaskCommandHandler(IUnitOfWork _unitOfWork) : IReque
         var task = await _unitOfWork.Repository<ProjectTask>()
             .GetByIdAsync(model.Id, cancellationToken);
 
+        if(task is null)
+            return Result<bool>.Failure("Task not found");
 
         task.Name = model.Name;
         task.Description = model.Description;
