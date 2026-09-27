@@ -1,8 +1,8 @@
 ﻿
 namespace PMO.Application.Features.Users.Commands.Login;
 
-public sealed record LoginUserCommand : IRequest<Result<LoginUserResponse>>
-{
-    public string Email { get; init; } = null!;
-    public string Password { get; init; } = null!;
-}
+public sealed record LoginUserCommand
+(
+    [property: DefaultValue ("asma@app.com")] string Email,
+    [property: DefaultValue ("123456")] string Password
+) : IRequest<Result<LoginUserResponse>>;

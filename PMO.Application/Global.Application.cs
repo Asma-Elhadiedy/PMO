@@ -4,6 +4,7 @@ global using PMO.Domain.UoW;
 global using FluentValidation;
 global using PMO.Domain.Enums;
 global using PMO.Domain.Entities;
+global using System.ComponentModel;
 global using PMO.Domain.Interfaces;
 global using PMO.Application.Common;
 global using PMO.Application.Behaviors;

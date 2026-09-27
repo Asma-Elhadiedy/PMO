@@ -15,7 +15,7 @@ public class UsersController(IMediator _mediator, ILogger<UsersController> _logg
     public async Task<IActionResult> Login([FromBody] LoginUserCommand command)
     {
         var response = await _mediator.Send(command);
-        if(response.IsSuccess)
+        if (response.IsSuccess)
             return Accepted(response);
         return BadRequest(response);
     }
@@ -29,5 +29,12 @@ public class UsersController(IMediator _mediator, ILogger<UsersController> _logg
             return Created();
 
         return BadRequest(response);
+    }
+
+    [HttpPost("Logout")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<IActionResult> Logout()
+    {
+        return Ok();
     }
 }

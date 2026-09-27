@@ -1,5 +1,6 @@
 ﻿
 using Microsoft.IdentityModel.Tokens;
+using PMO.Domain.Exceptions;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -8,7 +9,7 @@ namespace PMO.Infrastructure.Services;
 
 internal class IdentityService(UserManager<ApplicationUser> _userManager, IOptions<JWTTokenOptions> _jwtOptions) : IIdentityService
 {
-   
+
     public async Task<(bool Success, string UserId)> CreateUserAsync(string email, string password, string fullName)
     {
         var user = new ApplicationUser
@@ -18,6 +19,13 @@ internal class IdentityService(UserManager<ApplicationUser> _userManager, IOptio
             FullName = fullName
         };
         var result = await _userManager.CreateAsync(user, password);
+        if (!result.Succeeded)
+        {
+            var errors = result.Errors
+                .ToDictionary(g => g.Code, g => new string[] { g.Description });
+            throw new ValidationException(errors);
+        }
+
         return (result.Succeeded, user.Id);
     }
 
@@ -45,7 +53,7 @@ internal class IdentityService(UserManager<ApplicationUser> _userManager, IOptio
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.Name, user.FullName)
-            ]),                                   
+            ]),
             SigningCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature)
         };
 
