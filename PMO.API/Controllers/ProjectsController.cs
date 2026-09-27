@@ -7,9 +7,11 @@ using PMO.Application.Features.Projects.Commands.DeleteProject;
 
 namespace PMO.API.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 [Produces("application/json")]
+[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 public class ProjectsController(ILogger<ProjectsController> _logger, IMediator _mediator) : ControllerBase
 {
     [HttpGet]
@@ -28,7 +30,7 @@ public class ProjectsController(ILogger<ProjectsController> _logger, IMediator _
         return Ok(projectsResult);
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{id:guid}")]
     [ProducesResponseType<Result<ProjectResponse>>(StatusCodes.Status200OK)]
     [ProducesResponseType<Result<ProjectResponse>>(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetById([FromRoute]Guid id, CancellationToken ct)
@@ -63,7 +65,7 @@ public class ProjectsController(ILogger<ProjectsController> _logger, IMediator _
     }
 
 
-    [HttpPut("{id}")]
+    [HttpPut("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType<Result<bool>>(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Update([FromBody] UpdateProjectRequest request, CancellationToken ct)
@@ -79,7 +81,7 @@ public class ProjectsController(ILogger<ProjectsController> _logger, IMediator _
     }
 
 
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType<Result<bool>>(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Delete([FromRoute]Guid id, CancellationToken ct)

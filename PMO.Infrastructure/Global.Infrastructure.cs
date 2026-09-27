@@ -6,10 +6,14 @@ global using PMO.Domain.Repository;
 global using PMO.Infrastructure.UoW;
 global using System.Linq.Expressions;
 global using PMO.Infrastructure.Services;
+global using PMO.Infrastructure.Identity;
+global using Microsoft.Extensions.Options;
+global using Microsoft.AspNetCore.Identity;
 global using System.Collections.Concurrent;
 global using PMO.Infrastructure.Repository;
 global using Microsoft.EntityFrameworkCore;
 global using PMO.Infrastructure.Persistence;
+global using PMO.Infrastructure.ConfigurationOptions;
 global using Microsoft.Extensions.DependencyInjection;
 global using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

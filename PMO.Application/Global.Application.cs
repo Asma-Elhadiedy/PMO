@@ -1,8 +1,10 @@
-﻿global using MediatR;
+﻿
+global using MediatR;
 global using PMO.Domain.UoW; 
 global using FluentValidation;
 global using PMO.Domain.Enums;
 global using PMO.Domain.Entities;
+global using PMO.Domain.Interfaces;
 global using PMO.Application.Common;
 global using PMO.Application.Behaviors;
 global using Microsoft.Extensions.Logging;

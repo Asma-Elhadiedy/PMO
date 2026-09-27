@@ -9,7 +9,7 @@ namespace PMO.API.Controllers;
 [Produces("application/json")]
 public class CommentsController(IMediator _mediator, ILogger<CommentsController> _logger) : ControllerBase
 {
-    [HttpGet("{taskId}")]
+    [HttpGet("{taskId:guid}")]
     [ProducesResponseType<Result<IReadOnlyList<CommentResponse>>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> Get(Guid taskId)
     {

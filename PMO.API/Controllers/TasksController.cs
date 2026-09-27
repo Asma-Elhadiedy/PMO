@@ -1,3 +1,4 @@
+using PMO.Application.Features.Comments.Queries.ListComments;
 using PMO.Application.Features.Tasks.Commands.CreateTask;
 using PMO.Application.Features.Tasks.Commands.DeleteTask;
 using PMO.Application.Features.Tasks.Commands.UpdateTask;
@@ -28,7 +29,7 @@ public class TasksController(ILogger<TasksController> _logger, IMediator _mediat
         return Ok(tasksResult);
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{id:guid}")]
     [ProducesResponseType<Result<TaskResponse>>(StatusCodes.Status200OK)]
     [ProducesResponseType<Result<TaskResponse>>(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetById([FromRoute] Guid id, CancellationToken ct)
@@ -43,6 +44,21 @@ public class TasksController(ILogger<TasksController> _logger, IMediator _mediat
 
         _logger.LogInformation("Task fetched successfully");
         return Ok(taskResult);
+    }
+
+    [HttpGet("{id:guid}/comments")]
+    [ProducesResponseType<Result<IReadOnlyList<CommentResponse>>>(StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetComments(Guid id)
+    {
+        var commentsResult = await _mediator.Send(new GetCommentsQuery(id));
+        if (!commentsResult.IsSuccess)
+        {
+            _logger.LogWarning(commentsResult.Error);
+            return NotFound(commentsResult);
+        }
+
+        _logger.LogInformation("Comments fetched successfully");
+        return Ok(commentsResult);
     }
 
     [HttpPost]
@@ -63,7 +79,7 @@ public class TasksController(ILogger<TasksController> _logger, IMediator _mediat
     }
 
 
-    [HttpPut("{id}")]
+    [HttpPut("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType<Result<bool>>(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Update([FromBody] UpdateTaskRequest request, CancellationToken ct)
@@ -80,7 +96,7 @@ public class TasksController(ILogger<TasksController> _logger, IMediator _mediat
         return NoContent();
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType<Result<bool>>(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Delete([FromRoute] Guid id, CancellationToken ct)

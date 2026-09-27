@@ -12,7 +12,7 @@ internal sealed class GetProjectByIdQueryHandler(IUnitOfWork _unitOfWork) : IReq
             return Result<ProjectResponse>.Failure($"Project with Id {request.Id} not found.");
 
         return Result<ProjectResponse>.Success(
-            new ProjectResponse(
+            new(
                 project.Id,
                 project.Name,
                 project.Description,

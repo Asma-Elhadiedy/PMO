@@ -9,7 +9,7 @@ internal sealed class GetTaskByIdQueryHandler(IUnitOfWork _unitOfWork) : IReques
         if (task is null)
             return Result<TaskResponse>.Failure("Task not found");
 
-        return Result<TaskResponse>.Success(new TaskResponse(
+        return Result<TaskResponse>.Success(new(
             task.Id,
             task.Name,
             task.Description,

@@ -1,6 +1,4 @@
-﻿
-
-namespace PMO.Infrastructure.Services;
+﻿namespace PMO.Infrastructure.Services;
 
 public class SeedData(AppDbContext _context) : ISeedData
 {

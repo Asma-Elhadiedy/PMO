@@ -4,7 +4,10 @@ var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("defaultConnection") ??
     throw new Exception("Couldn't find connection string.");
 
-builder.Services.AddPresentationServices(connectionString);
+builder.Services.AddApplicationServices()
+                .AddInfrastructureServices(connectionString)
+                .AddPresentationServices(builder);
+
 builder.Services.AddControllers();
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -31,6 +34,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
