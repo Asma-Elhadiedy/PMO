@@ -7,10 +7,11 @@ using PMO.Application.Features.Projects.Commands.DeleteProject;
 
 namespace PMO.API.Controllers;
 
-[Authorize]
 [ApiController]
 [Route("api/[controller]")]
+[Authorize(Roles = ConstRoles.User)]
 [Produces("application/json")]
+[ProducesResponseType(StatusCodes.Status403Forbidden)]
 [ProducesResponseType(StatusCodes.Status401Unauthorized)]
 public class ProjectsController(ILogger<ProjectsController> _logger, IMediator _mediator) : ControllerBase
 {

@@ -15,8 +15,8 @@ public static class DependencyInjection
 
             services.AddDbContext<AppDbContext>(o => 
                 o.UseSqlServer(connectionString));
-            
-            services.AddIdentityCore<ApplicationUser>(options =>
+
+            services.AddIdentity<ApplicationUser, IdentityRole>(options =>
             {
                 options.Password.RequireDigit = false;
                 options.Password.RequireLowercase = false;

@@ -26,7 +26,7 @@ public class UnitOfWork(AppDbContext _context) : IUnitOfWork
         return await _context.SaveChangesAsync(ct);
     }
     
-    public async Task<bool> ExecuteTransactionAsync<T>(Func<Task<bool>> action, CancellationToken ct = default)
+    public async Task<bool> ExecuteTransactionAsync(Func<Task<bool>> action, CancellationToken ct = default)
     {
         var transaction = await _context.Database.BeginTransactionAsync(ct);
         try

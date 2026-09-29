@@ -9,7 +9,7 @@ public class RegisterUserCommandHandler(IIdentityService _identityService) : IRe
             .CreateUserAsync(
                 request.Email,
                 request.Password,
-                $"{request.FirstName} {request.LastName}");
+                $"{request.FirstName} {request.LastName}", cancellationToken);
 
         if (!Success)
             return Result<bool>.Failure("Failed to create user.");

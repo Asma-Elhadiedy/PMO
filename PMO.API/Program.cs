@@ -25,6 +25,8 @@ app.UseExceptionHandler();
 
 await app.InitializeDatabaseAsync();
 
+
+
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();

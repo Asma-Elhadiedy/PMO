@@ -9,7 +9,10 @@ namespace PMO.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize(Roles = ConstRoles.User)]
 [Produces("application/json")]
+[ProducesResponseType(StatusCodes.Status403Forbidden)]
+[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 public class TasksController(ILogger<TasksController> _logger, IMediator _mediator) : ControllerBase
 {
     [HttpGet]

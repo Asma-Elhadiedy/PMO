@@ -1,12 +1,14 @@
 ﻿
-
 using PMO.Application.Features.Comments.Queries.ListComments;
 
 namespace PMO.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize(Roles = ConstRoles.User)]
 [Produces("application/json")]
+[ProducesResponseType(StatusCodes.Status403Forbidden)]
+[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 public class CommentsController(IMediator _mediator, ILogger<CommentsController> _logger) : ControllerBase
 {
     [HttpGet("{taskId:guid}")]

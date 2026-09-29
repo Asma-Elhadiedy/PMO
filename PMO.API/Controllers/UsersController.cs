@@ -1,5 +1,6 @@
 ﻿
 using PMO.Application.Features.Users.Commands.Login;
+using PMO.Application.Features.Users.Commands.Logout;
 using PMO.Application.Features.Users.Commands.Register;
 
 namespace PMO.API.Controllers;
@@ -35,6 +36,8 @@ public class UsersController(IMediator _mediator, ILogger<UsersController> _logg
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> Logout()
     {
+        var u = User.Identity?.Name;
+        await _mediator.Send(new LogoutUserCommand());
         return Ok();
     }
 }
