@@ -17,7 +17,7 @@ public class ProjectTask : BaseEntity
     public virtual Project? Project { get; set; }
 
     [ForeignKey(nameof(UserId))]
-    public string UserId { get; set; }
+    public string UserId { get; set; } = default!;
 
     /// <summary>
     /// Navigation Collection

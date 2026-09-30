@@ -84,4 +84,12 @@ internal class IdentityService(IUnitOfWork _unitOfWork, UserManager<ApplicationU
     {
         throw new NotImplementedException();
     }
+
+    public async Task<bool> UserExistsAsync(string userId)
+    {
+        var user = await _userManager.Users.Where(u => u.Id == userId)
+            .Select(u => u.Id)
+            .FirstOrDefaultAsync();
+        return user != null;
+    }
 }

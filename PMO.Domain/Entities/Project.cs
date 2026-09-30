@@ -11,6 +11,13 @@ public class Project : BaseEntity
 
 
     /// <summary>
+    /// Navigation Property
+    /// </summary>
+
+    public string OwnerId { get; set; } = default!;
+    [ForeignKey(nameof(OwnerId))]
+
+    /// <summary>
     /// Navigation Collection
     /// </summary>
     public virtual ICollection<ProjectTask>? Tasks { get; set; } = [];

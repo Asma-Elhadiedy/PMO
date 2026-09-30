@@ -7,4 +7,5 @@ public record CreateTaskRequest(
     string Description,
     Guid ProjectId,
     DateTime StartDate,
-    DateTime EndDate);
+    DateTime EndDate,
+    string OwnerId);

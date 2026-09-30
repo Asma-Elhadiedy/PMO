@@ -12,7 +12,8 @@ internal sealed class CreateTaskCommandHandler(IUnitOfWork _unitOfWork) : IReque
             Description = model.Description,
             ProjectId = model.ProjectId,
             StartDate = model.StartDate,
-            EndDate = model.EndDate
+            EndDate = model.EndDate,
+            UserId = model.OwnerId,
         };
 
         _unitOfWork.Repository<ProjectTask>().Add(task);

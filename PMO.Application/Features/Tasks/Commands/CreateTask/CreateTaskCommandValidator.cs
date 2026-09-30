@@ -4,7 +4,7 @@ namespace PMO.Application.Features.Tasks.Commands.CreateTask;
 
 internal class CreateTaskCommandValidator : AbstractValidator<CreateTaskCommand>
 {
-    public CreateTaskCommandValidator()
+    public CreateTaskCommandValidator(IIdentityService _identityService)
     {
         RuleFor(x => x.Request.Name)
             .NotEmpty().WithMessage("Task name is required.")
@@ -18,5 +18,15 @@ internal class CreateTaskCommandValidator : AbstractValidator<CreateTaskCommand>
 
         RuleFor(x => x.Request.ProjectId)
             .NotEmpty().WithMessage("Project ID is required.");
+
+        RuleFor(x => x.Request.OwnerId)
+            .NotEmpty().WithMessage("Owner ID is required.");
+
+        RuleFor(x => x.Request.OwnerId)
+            .MustAsync(async (ownerId, cancellation) =>
+            {
+                return await _identityService.UserExistsAsync(ownerId);
+            })
+            .WithMessage("Owner ID is invalid.");
     }
 }

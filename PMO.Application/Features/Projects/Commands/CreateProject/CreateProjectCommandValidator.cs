@@ -4,7 +4,7 @@ namespace PMO.Application.Features.Projects.Commands.CreateProject;
 
 internal class CreateProjectCommandValidator : AbstractValidator<CreateProjectCommand>
 {
-    public CreateProjectCommandValidator()
+    public CreateProjectCommandValidator(IIdentityService _identityService)
     {
         RuleFor(x => x.Request.Name)
             .NotEmpty().WithMessage("Project name is required.")
@@ -16,6 +16,15 @@ internal class CreateProjectCommandValidator : AbstractValidator<CreateProjectCo
         RuleFor(x => x.Request.StartDate)
             .LessThanOrEqualTo(x => x.Request.EndDate).WithMessage("Start date must be less than or equal to end date.");
 
+        RuleFor(x => x.Request.OwnerId)
+            .NotEmpty().WithMessage("Owner ID is required.");
+
+        RuleFor(x => x.Request.OwnerId)
+            .MustAsync(async (ownerId, cancellation) =>
+            {
+                return await _identityService.UserExistsAsync(ownerId);
+            })
+            .WithMessage("Owner ID is invalid.");
 
     }
 }
