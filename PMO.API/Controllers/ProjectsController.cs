@@ -1,8 +1,10 @@
-using PMO.Application.Features.Projects.Queries.ListProjects;
-using PMO.Application.Features.Projects.Queries.GetProjectById;
 using PMO.Application.Features.Projects.Commands.CreateProject;
-using PMO.Application.Features.Projects.Commands.UpdateProject;
 using PMO.Application.Features.Projects.Commands.DeleteProject;
+using PMO.Application.Features.Projects.Commands.UpdateProject;
+using PMO.Application.Features.Projects.Queries.GetProjectById;
+using PMO.Application.Features.Projects.Queries.ListProjects;
+using PMO.Application.Features.Tasks.Queries.ListTasks;
+using PMO.Domain.Entities;
 
 
 namespace PMO.API.Controllers;
@@ -30,6 +32,24 @@ public class ProjectsController(ILogger<ProjectsController> _logger, IMediator _
         _logger.LogInformation("Projects fetched successfully");
         return Ok(projectsResult);
     }
+
+    [HttpGet("{id:guid}/tasks")]
+    [ProducesResponseType<Result<TaskResponse>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<Result<TaskResponse>>(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetProjectTasks([FromRoute]Guid id, CancellationToken ct)
+    {
+        var tasksResult = await _mediator.Send(new GetTasksQuery(id), ct);
+
+        if (!tasksResult.IsSuccess)
+        {
+            _logger.LogWarning(tasksResult.Error);
+            return NotFound(tasksResult);
+        }
+
+        _logger.LogInformation("Project tasks fetched successfully");
+        return Ok(tasksResult);
+    }
+
 
     [HttpGet("{id:guid}")]
     [ProducesResponseType<Result<ProjectResponse>>(StatusCodes.Status200OK)]

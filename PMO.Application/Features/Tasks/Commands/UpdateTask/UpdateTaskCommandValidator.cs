@@ -16,10 +16,5 @@ internal class UpdateTaskCommandValidator : AbstractValidator<UpdateTaskCommand>
         RuleFor(x => x.Request.StartDate)
             .LessThanOrEqualTo(x => x.Request.EndDate).WithMessage("Start date must be less than or equal to end date.");
 
-        RuleFor(x => x.Request.ProjectId)
-            .NotEmpty().WithMessage("Project ID is required.");
-
-        RuleFor(x => x.Request.Status)
-            .IsInEnum().WithMessage("Invalid task status.");
     }
 }

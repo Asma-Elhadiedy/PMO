@@ -10,18 +10,31 @@ public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> _logger) : I
         Exception exception,
         CancellationToken cancellationToken)
     {
-        if (exception is not Domain.Exceptions.ValidationException validationException)        
-            return false;
-        
+        if (exception is Domain.Exceptions.ValidationException validationException)
 
-        _logger.LogWarning("Validation failed: {Message}", validationException.Message);
+        {
+            _logger.LogWarning("Validation failed: {Message}", validationException.Message);
 
-        var problemDetails = Result<IDictionary<string, string[]>>.Failures(validationException.Errors);
+            var problemDetails = Result<IDictionary<string, string[]>>.Failures(validationException.Errors);
 
+            httpContext.Response.ContentType = "application/json";
+            httpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
+            await httpContext.Response.WriteAsJsonAsync(problemDetails, cancellationToken);
+            return true;
+        }
 
-        httpContext.Response.ContentType = "application/json";
-        httpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
-        await httpContext.Response.WriteAsJsonAsync(problemDetails, cancellationToken);
-        return true;
+        if (exception is Domain.Exceptions.InvalidTaskStatusTransitionException invalidTaskStatusTransitionException)
+        {
+            _logger.LogWarning("Invalid task status transition: {Message}", invalidTaskStatusTransitionException.Message);
+
+            var problemDetails = Result<string>.Failure(invalidTaskStatusTransitionException.Message);
+
+            httpContext.Response.ContentType = "application/json";
+            httpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
+            await httpContext.Response.WriteAsJsonAsync(problemDetails, cancellationToken);
+            return true;
+        }
+
+        return false;
     }
 }

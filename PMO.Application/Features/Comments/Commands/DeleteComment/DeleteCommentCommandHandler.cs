@@ -12,6 +12,9 @@ public class DeleteCommentCommandHandler(IUnitOfWork _unitOfWork) : IRequestHand
         if (comment is null)
             return Result<bool>.Failure("The comment was not found.");
 
+        if(comment.CreatedById != request.DeletedById)
+            return Result<bool>.Failure("You are not authorized to delete this comment.");
+
         _unitOfWork.Repository<Comment>().Remove(comment, cancellationToken);
         if (await _unitOfWork.CompleteAsync(cancellationToken) > 0)
             return Result<bool>.Success(true);

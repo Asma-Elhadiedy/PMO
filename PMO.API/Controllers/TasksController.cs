@@ -2,6 +2,7 @@ using PMO.Application.Features.Comments.Queries.ListComments;
 using PMO.Application.Features.Tasks.Commands.CreateTask;
 using PMO.Application.Features.Tasks.Commands.DeleteTask;
 using PMO.Application.Features.Tasks.Commands.UpdateTask;
+using PMO.Application.Features.Tasks.Commands.UpdateTaskStatus;
 using PMO.Application.Features.Tasks.Queries.GetTaskById;
 using PMO.Application.Features.Tasks.Queries.ListTasks;
 
@@ -18,9 +19,9 @@ public class TasksController(ILogger<TasksController> _logger, IMediator _mediat
     [HttpGet]
     [ProducesResponseType<Result<IReadOnlyList<TaskResponse>>>(StatusCodes.Status200OK)]
     [ProducesResponseType<Result<IReadOnlyList<TaskResponse>>>(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> Get(CancellationToken ct)
+    public async Task<IActionResult> Get([FromQuery] Guid projectId, CancellationToken ct)
     {
-        var tasksResult = await _mediator.Send(new GetTasksQuery(), ct);
+        var tasksResult = await _mediator.Send(new GetTasksQuery(projectId), ct);
 
         if (!tasksResult.IsSuccess)
         {
@@ -88,6 +89,23 @@ public class TasksController(ILogger<TasksController> _logger, IMediator _mediat
     public async Task<IActionResult> Update([FromBody] UpdateTaskRequest request, CancellationToken ct)
     {
         var updateResult = await _mediator.Send(new UpdateTaskCommand(request), ct);
+
+        if (!updateResult.IsSuccess)
+        {
+            _logger.LogWarning(updateResult.Error);
+            return BadRequest(updateResult);
+        }
+
+        _logger.LogInformation("Task updated successfully");
+        return NoContent();
+    }
+
+    [HttpPut("Status/{id:guid}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType<Result<bool>>(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> UpdateStatus([FromBody] UpdateTaskStatusCommand request, CancellationToken ct)
+    {
+        var updateResult = await _mediator.Send(request, ct);
 
         if (!updateResult.IsSuccess)
         {
