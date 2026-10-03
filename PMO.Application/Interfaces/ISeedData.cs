@@ -1,5 +1,5 @@
 ﻿
-namespace PMO.Domain.Interfaces;
+namespace PMO.Application.Interfaces;
 
 public interface ISeedData
 {

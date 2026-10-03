@@ -117,7 +117,6 @@ public class TasksController(ILogger<TasksController> _logger, IMediator _mediat
             return BadRequest(deleteResult);
         }
 
-
         _logger.LogInformation("Task deleted successfully");
         return NoContent();
     }

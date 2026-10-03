@@ -5,13 +5,13 @@ public class RegisterUserCommandHandler(IIdentityService _identityService) : IRe
 {
     public async Task<Result<bool>> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
     {
-        var (Success, UserId) = await _identityService
+        var (isSuccess, UserId) = await _identityService
             .CreateUserAsync(
                 request.Email,
                 request.Password,
                 $"{request.FirstName} {request.LastName}", cancellationToken);
 
-        if (!Success)
+        if (!isSuccess)
             return Result<bool>.Failure("Failed to create user.");
         
         return Result<bool>.Success(true);

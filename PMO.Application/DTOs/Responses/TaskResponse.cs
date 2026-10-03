@@ -1,4 +1,5 @@
-﻿namespace PMO.Application.DTOs.Responses;
+﻿
+namespace PMO.Application.DTOs.Responses;
 
 public sealed record TaskResponse(
     Guid Id,

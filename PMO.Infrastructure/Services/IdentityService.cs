@@ -10,7 +10,7 @@ namespace PMO.Infrastructure.Services;
 internal class IdentityService(IUnitOfWork _unitOfWork, UserManager<ApplicationUser> _userManager, IOptions<JWTTokenOptions> _jwtOptions) : IIdentityService
 {
 
-    public async Task<(bool Success, string UserId)> CreateUserAsync(string email, string password, string fullName, CancellationToken ct)
+    public async Task<(bool isSuccess, string UserId)> CreateUserAsync(string email, string password, string fullName, CancellationToken ct)
     {
         var user = new ApplicationUser
         {

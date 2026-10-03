@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-
+﻿
 namespace PMO.Application.DTOs.Requests;
 
 public record CreateProjectRequest(

@@ -22,10 +22,9 @@ public class CreateCommentCommandValidator : AbstractValidator<CreateCommentComm
                             t => t.Id == cmd.TaskId,
                             ct)
                     )
-            .WithMessage("Another user owns this task, you can not create a comment.");
-
+            .WithMessage("You are not authorized to create a comment for this task.");
 
         RuleFor(x => x.Content)
-            .NotEmpty().WithMessage("Content is required.");
+    .NotEmpty().WithMessage("Content is required.");
     }
 }
