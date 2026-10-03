@@ -16,15 +16,15 @@ internal class CreateProjectCommandValidator : AbstractValidator<CreateProjectCo
         RuleFor(x => x.Request.StartDate)
             .LessThanOrEqualTo(x => x.Request.EndDate).WithMessage("Start date must be less than or equal to end date.");
 
-        RuleFor(x => x.Request.OwnerId)
-            .NotEmpty().WithMessage("Owner ID is required.");
+        RuleFor(x => x.CreatedBy)
+            .NotEmpty().WithMessage("Created By ID is required.");
 
-        RuleFor(x => x.Request.OwnerId)
-            .MustAsync(async (ownerId, cancellation) =>
+        RuleFor(x => x.CreatedBy)
+            .MustAsync(async (createdById, cancellation) =>
             {
-                return await _identityService.UserExistsAsync(ownerId);
+                return await _identityService.UserExistsAsync(createdById);
             })
-            .WithMessage("Owner ID is invalid.");
+            .WithMessage("Created By ID is invalid.");
 
     }
 }

@@ -1,10 +1,9 @@
 ﻿
-using Microsoft.IdentityModel.Tokens;
-using PMO.Domain.Constants;
-using PMO.Domain.Exceptions;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
+
 using System.Text;
+using System.Security.Claims;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace PMO.Infrastructure.Services;
 
@@ -43,7 +42,7 @@ internal class IdentityService(IUnitOfWork _unitOfWork, UserManager<ApplicationU
         return (transactionResult, user.Id);
     }
 
-    public async Task<string?> AuthenticateAsync(string email, string password)
+    public async Task<LoginUserResponse?> AuthenticateAsync(string email, string password)
     {
         var user = await _userManager.FindByEmailAsync(email);
         if (user == null) return null;
@@ -52,7 +51,7 @@ internal class IdentityService(IUnitOfWork _unitOfWork, UserManager<ApplicationU
         return isMatch ? await GenerateToken(user) : null;
     }
 
-    private async Task<string> GenerateToken(ApplicationUser user)
+    private async Task<LoginUserResponse> GenerateToken(ApplicationUser user)
     {
         var userRoles = await _userManager.GetRolesAsync(user);
         var roles = userRoles.Select(role => new Claim(ClaimTypes.Role, role)).ToList();
@@ -77,7 +76,8 @@ internal class IdentityService(IUnitOfWork _unitOfWork, UserManager<ApplicationU
 
         var tokenHandler = new JwtSecurityTokenHandler();
         var token = tokenHandler.CreateToken(tokenDescriptor);
-        return tokenHandler.WriteToken(token);
+
+        return new(tokenHandler.WriteToken(token), tokenDescriptor.Expires.Value);
     }
 
     public Task<bool> LogoutAsync(string email)

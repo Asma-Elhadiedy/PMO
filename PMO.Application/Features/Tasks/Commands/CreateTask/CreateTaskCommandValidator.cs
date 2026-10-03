@@ -1,5 +1,4 @@
 ﻿
-
 namespace PMO.Application.Features.Tasks.Commands.CreateTask;
 
 internal class CreateTaskCommandValidator : AbstractValidator<CreateTaskCommand>
@@ -16,22 +15,28 @@ internal class CreateTaskCommandValidator : AbstractValidator<CreateTaskCommand>
         RuleFor(x => x.Request.StartDate)
             .LessThanOrEqualTo(x => x.Request.EndDate).WithMessage("Start date must be less than or equal to end date.");
 
-        RuleFor(x => x.Request.ProjectId)
+        RuleFor(x => x.ProjectId)
             .NotEmpty().WithMessage("Project ID is required.");
 
-        RuleFor(x => x.Request.OwnerId)
-            .NotEmpty().WithMessage("Owner ID is required.");
-
-        RuleFor(x => x.Request.ProjectId)
+        RuleFor(x => x.ProjectId)
             .MustAsync(async (projectId, ct) =>
                 await _unitOfWork.Repository<Project>().ExistsAsync(projectId, ct))
             .WithMessage("Project ID is invalid.");
 
-        RuleFor(x => x.Request.OwnerId)
-            .MustAsync(async (ownerId, ct) =>
+        RuleFor(x => x.CreatedBy)
+            .MustAsync(async (createdById, ct) =>
             {
-                return await _identityService.UserExistsAsync(ownerId);
+                return await _identityService.UserExistsAsync(createdById);
             })
-            .WithMessage("Owner ID is invalid.");
+            .WithMessage("Created By ID is invalid.");
+
+        RuleFor(x => x.CreatedBy)
+            .MustAsync(async (cmd, createdById, ct) =>
+                createdById == await _unitOfWork.Repository<Project>()
+                    .GetItemSelectedAsync(
+                        p => p.CreatedById,
+                        p => p.Id == cmd.ProjectId,
+                        ct)
+            ).WithMessage("You are not authorized to add tasks to this project.");
     }
 }

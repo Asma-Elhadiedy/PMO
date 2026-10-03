@@ -182,7 +182,7 @@ namespace PMO.Infrastructure.Migrations
 
                     b.HasIndex("TaskId");
 
-                    b.ToTable("Comments", (string)null);
+                    b.ToTable("Comments");
                 });
 
             modelBuilder.Entity("PMO.Domain.Entities.Project", b =>
@@ -194,6 +194,10 @@ namespace PMO.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("CreatedById")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -202,10 +206,6 @@ namespace PMO.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("OwnerId")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -220,7 +220,7 @@ namespace PMO.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Projects", (string)null);
+                    b.ToTable("Projects");
                 });
 
             modelBuilder.Entity("PMO.Domain.Entities.ProjectTask", b =>
@@ -232,6 +232,10 @@ namespace PMO.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("CreatedById")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -242,9 +246,6 @@ namespace PMO.Infrastructure.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("OwnerId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("ProjectId")
                         .HasColumnType("uniqueidentifier");
@@ -258,15 +259,11 @@ namespace PMO.Infrastructure.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("ProjectId");
 
-                    b.ToTable("Tasks", (string)null);
+                    b.ToTable("Tasks");
                 });
 
             modelBuilder.Entity("PMO.Infrastructure.Identity.ApplicationUser", b =>

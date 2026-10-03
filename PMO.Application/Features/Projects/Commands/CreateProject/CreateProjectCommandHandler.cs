@@ -12,7 +12,7 @@ internal sealed class CreateProjectCommandHandler(IUnitOfWork _unitOfWork) : IRe
             Description = model.Description,
             StartDate = model.StartDate,
             EndDate = model.EndDate,
-            OwnerId = model.OwnerId,
+            CreatedById = request.CreatedBy,
         };
 
         _unitOfWork.Repository<Project>().Add(project);

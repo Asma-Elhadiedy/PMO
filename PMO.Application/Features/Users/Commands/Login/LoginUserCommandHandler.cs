@@ -6,10 +6,10 @@ public sealed class LoginUserCommandHandler(IIdentityService _identityService) :
 {
     public async Task<Result<LoginUserResponse>> Handle(LoginUserCommand request, CancellationToken cancellationToken)
     {
-        var token = await _identityService.AuthenticateAsync(request.Email, request.Password);
-        if (string.IsNullOrEmpty(token))
+        var tokenData = await _identityService.AuthenticateAsync(request.Email, request.Password);
+        if (tokenData == null)
             return Result<LoginUserResponse>.Failure("Invalid email or password.");
 
-        return Result<LoginUserResponse>.Success(new() { Token = token });
+        return Result<LoginUserResponse>.Success(tokenData);
     }
 }

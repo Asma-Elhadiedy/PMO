@@ -1,6 +1,7 @@
 ﻿
 using PMO.Application.Features.Users.Commands.Login;
 using PMO.Application.Features.Users.Commands.Logout;
+using PMO.Application.Features.Users.Commands.Refresh;
 using PMO.Application.Features.Users.Commands.Register;
 
 namespace PMO.API.Controllers;
@@ -12,7 +13,7 @@ namespace PMO.API.Controllers;
 public class UsersController(IMediator _mediator, ILogger<UsersController> _logger) : ControllerBase
 {
     [HttpPost("Login")]
-    [ProducesResponseType(typeof(Result<bool>), StatusCodes.Status202Accepted)]
+    [ProducesResponseType(typeof(Result<LoginUserResponse>), StatusCodes.Status202Accepted)]
     public async Task<IActionResult> Login([FromBody] LoginUserCommand command)
     {
         var response = await _mediator.Send(command);
@@ -20,6 +21,14 @@ public class UsersController(IMediator _mediator, ILogger<UsersController> _logg
             return Accepted(response);
         return BadRequest(response);
     }
+
+    [HttpPost("Refresh")]
+    public async Task<IActionResult> Refresh(RefreshTokenCommand model)
+    {
+        var result = await _mediator.Send(model);
+        return result.Data ? Unauthorized() : Ok(result);
+    }
+
 
     [HttpPost("Register")]
     [ProducesResponseType(typeof(Result<bool>), StatusCodes.Status201Created)]

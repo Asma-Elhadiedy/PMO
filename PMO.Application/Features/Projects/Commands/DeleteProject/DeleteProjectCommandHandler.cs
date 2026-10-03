@@ -10,6 +10,9 @@ internal sealed class DeleteProjectCommandHandler(IUnitOfWork _unitOfWork) : IRe
         if (project == null)
             return Result<bool>.Failure("Project not found");
 
+        if (project.CreatedById != request.DeletedBy)
+            return Result<bool>.Failure("You are not authorized to delete this project.");
+
         _unitOfWork.Repository<Project>().Remove(project, cancellationToken);
         if (await _unitOfWork.CompleteAsync(cancellationToken) > 0)
             return Result<bool>.Success(true);

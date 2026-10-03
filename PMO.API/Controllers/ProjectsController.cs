@@ -33,28 +33,11 @@ public class ProjectsController(ILogger<ProjectsController> _logger, IMediator _
         return Ok(projectsResult);
     }
 
-    [HttpGet("{id:guid}/tasks")]
-    [ProducesResponseType<Result<TaskResponse>>(StatusCodes.Status200OK)]
-    [ProducesResponseType<Result<TaskResponse>>(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetProjectTasks([FromRoute]Guid id, CancellationToken ct)
-    {
-        var tasksResult = await _mediator.Send(new GetTasksQuery(id), ct);
-
-        if (!tasksResult.IsSuccess)
-        {
-            _logger.LogWarning(tasksResult.Error);
-            return NotFound(tasksResult);
-        }
-
-        _logger.LogInformation("Project tasks fetched successfully");
-        return Ok(tasksResult);
-    }
-
 
     [HttpGet("{id:guid}")]
     [ProducesResponseType<Result<ProjectResponse>>(StatusCodes.Status200OK)]
     [ProducesResponseType<Result<ProjectResponse>>(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetById([FromRoute]Guid id, CancellationToken ct)
+    public async Task<IActionResult> GetById([FromRoute] Guid id, CancellationToken ct)
     {
         var projectResult = await _mediator.Send(new GetProjectByIdQuery(id), ct);
 
@@ -71,10 +54,9 @@ public class ProjectsController(ILogger<ProjectsController> _logger, IMediator _
     [HttpPost]
     [ProducesResponseType<Result<Guid>>(StatusCodes.Status201Created)]
     [ProducesResponseType<Result<Guid>>(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> Create([FromBody]CreateProjectRequest request, CancellationToken ct)
+    public async Task<IActionResult> Create([FromBody] CreateProjectRequest request, CancellationToken ct)
     {
-        var projectResult = await _mediator.Send(new CreateProjectCommand(request), ct);
-
+        var projectResult = await _mediator.Send(new CreateProjectCommand(request, User.Id), ct);
         if (!projectResult.IsSuccess)
         {
             _logger.LogWarning(projectResult.Error);
@@ -89,9 +71,9 @@ public class ProjectsController(ILogger<ProjectsController> _logger, IMediator _
     [HttpPut("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType<Result<bool>>(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> Update([FromBody] UpdateProjectRequest request, CancellationToken ct)
+    public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateProjectRequest request, CancellationToken ct)
     {
-        var updateResult = await _mediator.Send(new UpdateProjectCommand(request), ct);
+        var updateResult = await _mediator.Send(new UpdateProjectCommand(id, User.Id, request), ct);
         if (!updateResult.IsSuccess)
         {
             _logger.LogWarning(updateResult.Error);
@@ -105,9 +87,9 @@ public class ProjectsController(ILogger<ProjectsController> _logger, IMediator _
     [HttpDelete("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType<Result<bool>>(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> Delete([FromRoute]Guid id, CancellationToken ct)
+    public async Task<IActionResult> Delete([FromRoute] Guid id, CancellationToken ct)
     {
-        var deleteResult = await _mediator.Send(new DeleteProjectCommand(id), ct);
+        var deleteResult = await _mediator.Send(new DeleteProjectCommand(id, User.Id), ct);
         if (!deleteResult.IsSuccess)
         {
             _logger.LogWarning(deleteResult.Error);

@@ -6,20 +6,23 @@ internal sealed class CreateTaskCommandHandler(IUnitOfWork _unitOfWork) : IReque
     public async Task<Result<Guid>> Handle(CreateTaskCommand request, CancellationToken cancellationToken)
     {
         var model = request.Request;
-        var projectOwnerId = await _unitOfWork.Repository<Project>()
-            .GetItemSelectedAsync(p => p.OwnerId, p => p.Id == model.ProjectId, cancellationToken);
+        //var projectOwnerId = await _unitOfWork.Repository<Project>()
+        //    .GetItemSelectedAsync(
+        //        p => p.CreatedById, 
+        //        p => p.Id == request.ProjectId, 
+        //        cancellationToken);
         
-        if (projectOwnerId is null || projectOwnerId != model.OwnerId)
-            return Result<Guid>.Failure("Task owner should be the project owner.");
+        //if (projectOwnerId is null || projectOwnerId != request.CreatedBy)
+        //    return Result<Guid>.Failure("Task owner should be the project owner.");
 
         var task = new ProjectTask
         {
             Name = model.Name,
             Description = model.Description,
-            ProjectId = model.ProjectId,
+            ProjectId = request.ProjectId,
             StartDate = model.StartDate,
             EndDate = model.EndDate,
-            UserId = model.OwnerId,
+            CreatedById = request.CreatedBy,
         };
 
         _unitOfWork.Repository<ProjectTask>().Add(task);

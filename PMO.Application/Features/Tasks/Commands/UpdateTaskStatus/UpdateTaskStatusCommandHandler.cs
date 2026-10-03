@@ -13,7 +13,7 @@ public class UpdateTaskStatusCommandHandler(IUnitOfWork _unitOfWork) : IRequestH
         if (task is null)
             return Result<bool>.Failure("Task not found");
 
-        var newStatus = (ETaskStatus)request.NewStatus;
+        var newStatus = request.NewStatus;
         if (!CanTransitionTo(task.Status, newStatus))
             throw new InvalidTaskStatusTransitionException(task.Status, newStatus);
 

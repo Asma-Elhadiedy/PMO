@@ -5,11 +5,12 @@ using PMO.Application.Features.Tasks.Commands.UpdateTask;
 using PMO.Application.Features.Tasks.Commands.UpdateTaskStatus;
 using PMO.Application.Features.Tasks.Queries.GetTaskById;
 using PMO.Application.Features.Tasks.Queries.ListTasks;
+using PMO.Domain.Enums;
 
 namespace PMO.API.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/projects/{projectId:guid}/[controller]")]
 [Authorize(Roles = ConstRoles.User)]
 [Produces("application/json")]
 [ProducesResponseType(StatusCodes.Status403Forbidden)]
@@ -19,7 +20,7 @@ public class TasksController(ILogger<TasksController> _logger, IMediator _mediat
     [HttpGet]
     [ProducesResponseType<Result<IReadOnlyList<TaskResponse>>>(StatusCodes.Status200OK)]
     [ProducesResponseType<Result<IReadOnlyList<TaskResponse>>>(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> Get([FromQuery] Guid projectId, CancellationToken ct)
+    public async Task<IActionResult> Get(Guid projectId, CancellationToken ct)
     {
         var tasksResult = await _mediator.Send(new GetTasksQuery(projectId), ct);
 
@@ -50,27 +51,13 @@ public class TasksController(ILogger<TasksController> _logger, IMediator _mediat
         return Ok(taskResult);
     }
 
-    [HttpGet("{id:guid}/comments")]
-    [ProducesResponseType<Result<IReadOnlyList<CommentResponse>>>(StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetComments(Guid id)
-    {
-        var commentsResult = await _mediator.Send(new GetCommentsQuery(id));
-        if (!commentsResult.IsSuccess)
-        {
-            _logger.LogWarning(commentsResult.Error);
-            return NotFound(commentsResult);
-        }
-
-        _logger.LogInformation("Comments fetched successfully");
-        return Ok(commentsResult);
-    }
 
     [HttpPost]
     [ProducesResponseType<Result<Guid>>(StatusCodes.Status201Created)]
     [ProducesResponseType<Result<Guid>>(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> Create([FromBody] CreateTaskRequest request, CancellationToken ct)
+    public async Task<IActionResult> Create(Guid projectId, [FromBody] CreateTaskRequest request, CancellationToken ct)
     {
-        var creationResult = await _mediator.Send(new CreateTaskCommand(request), ct);
+        var creationResult = await _mediator.Send(new CreateTaskCommand(request, projectId, User.Id), ct);
 
         if (!creationResult.IsSuccess)
         {
@@ -79,17 +66,16 @@ public class TasksController(ILogger<TasksController> _logger, IMediator _mediat
         }
 
         _logger.LogInformation("Task created successfully");
-        return CreatedAtAction(nameof(GetById), new { id = creationResult.Data }, new { taskId = creationResult.Data });
+        return CreatedAtAction(nameof(GetById), new { projectId, id = creationResult.Data }, new { taskId = creationResult.Data });
     }
 
 
     [HttpPut("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType<Result<bool>>(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> Update([FromBody] UpdateTaskRequest request, CancellationToken ct)
+    public async Task<IActionResult> Update(Guid id, Guid projectId, [FromBody] UpdateTaskRequest request, CancellationToken ct)
     {
-        var updateResult = await _mediator.Send(new UpdateTaskCommand(request), ct);
-
+        var updateResult = await _mediator.Send(new UpdateTaskCommand(request, id, projectId, User.Id), ct);
         if (!updateResult.IsSuccess)
         {
             _logger.LogWarning(updateResult.Error);
@@ -100,13 +86,13 @@ public class TasksController(ILogger<TasksController> _logger, IMediator _mediat
         return NoContent();
     }
 
-    [HttpPut("Status/{id:guid}")]
+    [HttpPut("{id:guid}/status")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType<Result<bool>>(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> UpdateStatus([FromBody] UpdateTaskStatusCommand request, CancellationToken ct)
+    public async Task<IActionResult> UpdateStatus(Guid id, int newStatus, CancellationToken ct)
     {
-        var updateResult = await _mediator.Send(request, ct);
 
+        var updateResult = await _mediator.Send(new UpdateTaskStatusCommand(id, (ETaskStatus)newStatus), ct);
         if (!updateResult.IsSuccess)
         {
             _logger.LogWarning(updateResult.Error);
@@ -116,13 +102,14 @@ public class TasksController(ILogger<TasksController> _logger, IMediator _mediat
         _logger.LogInformation("Task updated successfully");
         return NoContent();
     }
+
 
     [HttpDelete("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType<Result<bool>>(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Delete([FromRoute] Guid id, CancellationToken ct)
     {
-        var deleteResult = await _mediator.Send(new DeleteTaskCommand(id), ct);
+        var deleteResult = await _mediator.Send(new DeleteTaskCommand(id, User.Id), ct);
 
         if (!deleteResult.IsSuccess)
         {

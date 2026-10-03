@@ -7,7 +7,7 @@ internal sealed class UpdateProjectCommandHandler(IUnitOfWork _unitOfWork) : IRe
     {
         var model = request.Request;
         var project = await _unitOfWork.Repository<Project>()
-            .GetByIdAsync(model.Id, cancellationToken);
+            .GetByIdAsync(request.Id, cancellationToken);
 
         if(project is null)
             return Result<bool>.Failure("Project not found");

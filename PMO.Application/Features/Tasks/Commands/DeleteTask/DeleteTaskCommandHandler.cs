@@ -10,6 +10,9 @@ internal sealed class DeleteTaskCommandHandler(IUnitOfWork _unitOfWork) : IReque
         if (task == null)
             return Result<bool>.Failure("Task not found");
 
+        if(task.CreatedById != request.DeletedById)
+            return Result<bool>.Failure("You are not authorized to delete this task.");
+
         _unitOfWork.Repository<ProjectTask>().Remove(task, cancellationToken);
         if (await _unitOfWork.CompleteAsync(cancellationToken) > 0)
             return Result<bool>.Success(true);
