@@ -37,4 +37,8 @@ public class GenericRepository<T>(AppDbContext _context) : IGenericRepository<T>
         _context.Set<T>().Remove(entity);
         return true;
     }
+
+    public async Task<int> BulkDeleteAsync(Expression<Func<T, bool>> predicate, CancellationToken ct = default)
+        => await _context.Set<T>().Where(predicate).ExecuteDeleteAsync(ct);
+
 }

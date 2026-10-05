@@ -1,7 +1,7 @@
 ﻿
-
 using System.Text;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 
@@ -9,7 +9,6 @@ namespace PMO.Infrastructure.Services;
 
 internal class IdentityService(IUnitOfWork _unitOfWork, UserManager<ApplicationUser> _userManager, IOptions<JWTTokenOptions> _jwtOptions) : IIdentityService
 {
-
     public async Task<(bool isSuccess, string UserId)> CreateUserAsync(string email, string password, string fullName, CancellationToken ct)
     {
         var user = new ApplicationUser
@@ -51,33 +50,20 @@ internal class IdentityService(IUnitOfWork _unitOfWork, UserManager<ApplicationU
         return isMatch ? await GenerateToken(user) : null;
     }
 
-    private async Task<LoginUserResponse> GenerateToken(ApplicationUser user)
+    public async Task<LoginUserResponse?> RefreshTokenAsync(string refreshToken)
     {
-        var userRoles = await _userManager.GetRolesAsync(user);
-        var roles = userRoles.Select(role => new Claim(ClaimTypes.Role, role)).ToList();
-        var tokenOptions = _jwtOptions.Value;
-        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(tokenOptions.SecretKey));
-        var tokenDescriptor = new SecurityTokenDescriptor
-        {
-            Issuer = tokenOptions.Issuer,
-            Audience = tokenOptions.Audience,
-            IssuedAt = DateTime.UtcNow,
-            Expires = DateTime.UtcNow.AddMinutes(tokenOptions.ExpirationInMinutes),
-            Subject = new ClaimsIdentity(
-            [
-                new Claim(ClaimTypes.NameIdentifier, user.Id),
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Name, user.FullName),
-                ..roles
-            ]),
-            SigningCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature)
-        };
+        var tokenUserId = await _unitOfWork.Repository<RefreshToken>()
+            .GetItemSelectedAsync(
+                t => t.UserId,
+                t => t.Token == refreshToken && t.Expiration > DateTime.UtcNow);
+
+        if (tokenUserId == null) return null;
+        var user = await _userManager.FindByIdAsync(tokenUserId);
+        if (user == null) return null;
 
 
-        var tokenHandler = new JwtSecurityTokenHandler();
-        var token = tokenHandler.CreateToken(tokenDescriptor);
-
-        return new(tokenHandler.WriteToken(token), tokenDescriptor.Expires.Value);
+        await RevokeTokens(user.Id);
+        return await GenerateToken(user);
     }
 
     public Task<bool> LogoutAsync(string email)
@@ -85,11 +71,61 @@ internal class IdentityService(IUnitOfWork _unitOfWork, UserManager<ApplicationU
         throw new NotImplementedException();
     }
 
-    public async Task<bool> UserExistsAsync(string userId)
+    async Task<int> RevokeTokens(string userId)
     {
-        var user = await _userManager.Users.Where(u => u.Id == userId)
-            .Select(u => u.Id)
-            .FirstOrDefaultAsync();
-        return user != null;
+        return await _unitOfWork.Repository<RefreshToken>()
+            .BulkDeleteAsync(t => t.UserId == userId);
     }
+
+    public async Task<bool> UserExistsAsync(string userId)
+        => await _userManager.Users
+            .Where(u => u.Id == userId)
+            .Select(u => u.Id)
+            .FirstOrDefaultAsync() != null;
+
+
+    #region Helpers
+    async Task<LoginUserResponse> GenerateToken(ApplicationUser user)
+    {
+        var tokenOptions = _jwtOptions.Value;
+
+        var userRoles = await _userManager.GetRolesAsync(user);
+        var roleClaims = userRoles
+            .Select(role => new Claim(ClaimTypes.Role, role));
+
+        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(tokenOptions.SecretKey));
+        var tokenDescriptor = new SecurityTokenDescriptor
+        {
+            Issuer = tokenOptions.Issuer,
+            Audience = tokenOptions.Audience,
+            IssuedAt = DateTime.UtcNow,
+            Expires = DateTime.UtcNow.AddMinutes(tokenOptions.ExpirationInMinutes),
+            Subject = new(
+            [
+                new (ClaimTypes.NameIdentifier, user.Id),
+                new (ClaimTypes.Email, user.Email),
+                new (ClaimTypes.Name, user.FullName),
+                ..roleClaims
+            ]),
+            SigningCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature)
+        };
+
+        RefreshToken refreshToken = new()
+        {
+            Token = GenerateRefreshToken(),
+            Expiration = DateTime.UtcNow.AddDays(tokenOptions.RefreshTokenExpirationInDays),
+            UserId = user.Id
+        };
+
+        _unitOfWork.Repository<RefreshToken>().Add(refreshToken);
+        await _unitOfWork.CompleteAsync();
+
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var token = tokenHandler.CreateToken(tokenDescriptor);
+        return new(tokenHandler.WriteToken(token), tokenDescriptor.Expires.Value);
+    }
+    static string GenerateRefreshToken()
+        => Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
+    #endregion
+
 }

@@ -2,7 +2,6 @@
 global using PMO.Domain.UoW;
 global using PMO.Domain.Entities;
 global using PMO.Domain.Constants;
-global using PMO.Domain.Interfaces;
 global using PMO.Domain.Repository;
 global using PMO.Domain.Exceptions;
 global using PMO.Infrastructure.UoW;

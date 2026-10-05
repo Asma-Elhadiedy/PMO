@@ -52,6 +52,7 @@ public static class DependencyInjection
                         ValidateAudience = true,
                         ValidateIssuerSigningKey = true,
                         RequireExpirationTime = true,
+                        ClockSkew = TimeSpan.Zero,
                         ValidAudience = builder.Configuration["JWT:Audience"],
                         ValidIssuer = builder.Configuration["JWT:Issuer"],
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:SecretKey"]!)),

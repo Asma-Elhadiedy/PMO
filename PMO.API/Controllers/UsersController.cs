@@ -26,7 +26,7 @@ public class UsersController(IMediator _mediator, ILogger<UsersController> _logg
     public async Task<IActionResult> Refresh(RefreshTokenCommand model)
     {
         var result = await _mediator.Send(model);
-        return result.Data ? Unauthorized() : Ok(result);
+        return result.IsSuccess ? Unauthorized() : Ok(result);
     }
 
 

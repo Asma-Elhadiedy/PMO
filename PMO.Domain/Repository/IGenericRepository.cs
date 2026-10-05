@@ -14,4 +14,7 @@ public interface IGenericRepository<T> where T : BaseEntity
     bool Add(T entity);
 
     bool Remove(T entity, CancellationToken ct = default);
+
+    Task<int> BulkDeleteAsync(Expression<Func<T, bool>> predicate, CancellationToken ct = default);
+
 }
