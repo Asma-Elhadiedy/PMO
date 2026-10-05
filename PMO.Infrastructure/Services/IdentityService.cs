@@ -7,7 +7,11 @@ using System.IdentityModel.Tokens.Jwt;
 
 namespace PMO.Infrastructure.Services;
 
-internal class IdentityService(IUnitOfWork _unitOfWork, UserManager<ApplicationUser> _userManager, IOptions<JWTTokenOptions> _jwtOptions) : IIdentityService
+internal class IdentityService(
+    IUnitOfWork _unitOfWork, 
+    SignInManager<ApplicationUser> _signInManager, 
+    UserManager<ApplicationUser> _userManager, 
+    IOptions<JWTTokenOptions> _jwtOptions) : IIdentityService
 {
     public async Task<(bool isSuccess, string UserId)> CreateUserAsync(string email, string password, string fullName, CancellationToken ct)
     {
@@ -66,9 +70,11 @@ internal class IdentityService(IUnitOfWork _unitOfWork, UserManager<ApplicationU
         return await GenerateToken(user);
     }
 
-    public Task<bool> LogoutAsync(string email)
+    public async Task LogoutAsync(string userId)
     {
-        throw new NotImplementedException();
+        await _signInManager.SignOutAsync();
+        await RevokeTokens(userId);
+        return;
     }
 
     async Task<int> RevokeTokens(string userId)

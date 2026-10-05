@@ -45,8 +45,7 @@ public class UsersController(IMediator _mediator, ILogger<UsersController> _logg
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> Logout()
     {
-        var u = User.Identity?.Name;
-        await _mediator.Send(new LogoutUserCommand());
+        await _mediator.Send(new LogoutUserCommand(User.Id));
         return Ok();
     }
 }
