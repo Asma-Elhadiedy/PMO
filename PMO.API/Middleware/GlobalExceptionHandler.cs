@@ -1,5 +1,4 @@
-﻿
-using Microsoft.AspNetCore.Diagnostics;
+﻿using Microsoft.AspNetCore.Diagnostics;
 
 namespace PMO.API.Middleware;
 

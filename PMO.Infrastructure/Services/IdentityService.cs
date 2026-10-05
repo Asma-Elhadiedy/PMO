@@ -8,9 +8,9 @@ using System.IdentityModel.Tokens.Jwt;
 namespace PMO.Infrastructure.Services;
 
 internal class IdentityService(
-    IUnitOfWork _unitOfWork, 
-    SignInManager<ApplicationUser> _signInManager, 
-    UserManager<ApplicationUser> _userManager, 
+    IUnitOfWork _unitOfWork,
+    SignInManager<ApplicationUser> _signInManager,
+    UserManager<ApplicationUser> _userManager,
     IOptions<JWTTokenOptions> _jwtOptions) : IIdentityService
 {
     public async Task<(bool isSuccess, string UserId)> CreateUserAsync(string email, string password, string fullName, CancellationToken ct)
@@ -72,7 +72,10 @@ internal class IdentityService(
 
     public async Task LogoutAsync(string userId)
     {
-        await _signInManager.SignOutAsync();
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user is not null)
+            await _userManager.UpdateSecurityStampAsync(user);
+
         await RevokeTokens(userId);
         return;
     }
@@ -111,6 +114,7 @@ internal class IdentityService(
                 new (ClaimTypes.NameIdentifier, user.Id),
                 new (ClaimTypes.Email, user.Email),
                 new (ClaimTypes.Name, user.FullName),
+                new (ClaimTypes.CookiePath, user.SecurityStamp),
                 ..roleClaims
             ]),
             SigningCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature)
@@ -128,7 +132,7 @@ internal class IdentityService(
 
         var tokenHandler = new JwtSecurityTokenHandler();
         var token = tokenHandler.CreateToken(tokenDescriptor);
-        return new(tokenHandler.WriteToken(token), tokenDescriptor.Expires.Value);
+        return new(tokenHandler.WriteToken(token), refreshToken.Token, tokenDescriptor.Expires.Value);
     }
     static string GenerateRefreshToken()
         => Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));

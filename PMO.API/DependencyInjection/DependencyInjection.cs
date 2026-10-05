@@ -4,6 +4,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using System.Reflection.Metadata;
+using System.Security.Claims;
 using System.Security.Cryptography.Xml;
 using System.Text;
 
@@ -36,7 +37,7 @@ public static class DependencyInjection
 
             services.AddExceptionHandler<GlobalExceptionHandler>();
             services.AddProblemDetails();
-
+            services.AddScoped<OnTokenValidatedEvent>();
             services.AddAuthentication(o =>
             {
                 o.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -46,6 +47,7 @@ public static class DependencyInjection
                 .AddJwtBearer(o =>
                 {
                     o.RequireHttpsMetadata = false;   //Development
+                    o.EventsType = typeof(OnTokenValidatedEvent);
                     o.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateIssuer = true,

@@ -42,10 +42,10 @@ public class UsersController(IMediator _mediator, ILogger<UsersController> _logg
     }
 
     [HttpPost("Logout")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> Logout()
     {
         await _mediator.Send(new LogoutUserCommand(User.Id));
-        return Ok();
+        return NoContent();
     }
 }
